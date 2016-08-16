@@ -7,7 +7,6 @@ dragons = []
 raptors = []
 league = []
 
-
 def sort_players_into_teams():
     experienced = []
     inexperienced = []
@@ -38,117 +37,152 @@ def sort_players_into_teams():
     ## Remove the random experienced player from pool of experienced players
     experienced.remove(experienced_player1)
 
-    ## Take the height average for the first team
+    ## Take the height average for dragons
     for player in dragons:
         dragons_height_list.append(int(player['Height (inches)']))
     dragons_height_average = sum(dragons_height_list)/len(dragons_height_list)
 
     while len(experienced) != 0:
         raptors_height_average = None
-        ## Append an experienced player as close as possible to the first average
+        ## Append an experienced player to sharks as close as possible to the dragons average
         throwaway_list = []
         throwaway_list2 = []
         for player in experienced:
-            throwaway_list.append(dragons_height_average - float(player['Height (inches)']))
+            throwaway_list.append(abs(dragons_height_average - float(player['Height (inches)'])))
+            ## Try block here is for the first go around when raptors height average is null
+            ## because there are no members of the team yet.
             try:
-                throwaway_list2.append(raptors_height_average - float(player['Height (inches)']))
+                throwaway_list2.append(abs(raptors_height_average - float(player['Height (inches)'])))
             except TypeError:
                 continue
-        try:
-            if min(throwaway_list) < min(throwaway_list2):
-                selected_player = experienced[throwaway_list.index(min(throwaway_list))]
-                sharks.append(selected_player)
-                experienced.remove(selected_player)
-            else:
-                selected_player = experienced[throwaway_list2.index(min(throwaway_list2))]
-                sharks.append(selected_player)
-                experienced.remove(selected_player)
-        except ValueError:
+
+        if throwaway_list2 != [] and min(throwaway_list2) < min(throwaway_list):
+            selected_player = experienced[throwaway_list2.index(min(throwaway_list2))]
+            sharks.append(selected_player)
+            experienced.remove(selected_player)
+        else:
             selected_player = experienced[throwaway_list.index(min(throwaway_list))]
             sharks.append(selected_player)
             experienced.remove(selected_player)
 
-        ## Average 2nd team
+        ## Average sharks
         for player in sharks:
             sharks_height_list.append(int(player['Height (inches)']))
-            sharks_height_average = sum(sharks_height_list)/len(sharks_height_list)
 
-        ## Same thing for the 3rd team
+        sharks_height_average = sum(sharks_height_list)/len(sharks_height_list)
+
+        ## Same thing for the raptors
         throwaway_list = []
+        throwaway_list2 = []
         for player in experienced:
-            throwaway_list.append(sharks_height_average - float(player['Height (inches)']))
+            throwaway_list.append(abs(sharks_height_average - float(player['Height (inches)'])))
+            throwaway_list2.append(abs(dragons_height_average - float(player['Height (inches)'])))
 
-        selected_player = experienced[throwaway_list.index(min(throwaway_list))]
-        raptors.append(selected_player)
-        experienced.remove(selected_player)
+        if min(throwaway_list) < min(throwaway_list2):
+                selected_player = experienced[throwaway_list.index(min(throwaway_list))]
+                raptors.append(selected_player)
+                experienced.remove(selected_player)
+        else:
+            selected_player = experienced[throwaway_list2.index(min(throwaway_list2))]
+            raptors.append(selected_player)
+            experienced.remove(selected_player)
 
-        ## Average 3rd team
+        ## Average raptors
         for player in raptors:
             raptors_height_list.append(int(player['Height (inches)']))
-            raptors_height_average = sum(raptors_height_list)/len(raptors_height_list)
+
+        raptors_height_average = sum(raptors_height_list)/len(raptors_height_list)
 
         ## Back to first team inside the while loop
         throwaway_list = []
+        throwaway_list2 = []
         for player in experienced:
-            throwaway_list.append(raptors_height_average - float(player['Height (inches)']))
-        try:
-            selected_player = experienced[throwaway_list.index(min(throwaway_list))]
-            dragons.append(selected_player)
-            experienced.remove(selected_player)
+            throwaway_list.append(abs(raptors_height_average - float(player['Height (inches)'])))
+            throwaway_list2.append(abs(sharks_height_average -float(player['Height (inches)'])))
 
-        except ValueError:
-            continue
+            if throwaway_list != [] and throwaway_list2 != [] and min(throwaway_list) < min(throwaway_list2):
+                    selected_player = experienced[throwaway_list.index(min(throwaway_list))]
+                    dragons.append(selected_player)
+                    experienced.remove(selected_player)
+            else:
+                selected_player = experienced[throwaway_list2.index(min(throwaway_list2))]
+                dragons.append(selected_player)
+                experienced.remove(selected_player)
 
         ## Average 1st team
         for player in dragons:
             dragons_height_list.append(int(player['Height (inches)']))
-            dragons_height_average = sum(dragons_height_list)/len(dragons_height_list)
 
-        continue
+        dragons_height_average = sum(dragons_height_list)/len(dragons_height_list)
 
     while len(inexperienced) != 0:
 
         ## Append an inexperienced player as close as possible to the first average
         throwaway_list = []
+        throwaway_list2 = []
         for player in inexperienced:
-            throwaway_list.append(dragons_height_average - float(player['Height (inches)']))
+            throwaway_list.append(abs(dragons_height_average - float(player['Height (inches)'])))
+            throwaway_list2.append(abs(raptors_height_average - float(player['Height (inches)'])))
 
-        selected_player = inexperienced[throwaway_list.index(min(throwaway_list))]
-        sharks.append(selected_player)
-        inexperienced.remove(selected_player)
+        if min(throwaway_list) < min(throwaway_list2):
+                selected_player = inexperienced[throwaway_list.index(min(throwaway_list))]
+                sharks.append(selected_player)
+                inexperienced.remove(selected_player)
+        else:
+            selected_player = inexperienced[throwaway_list2.index(min(throwaway_list2))]
+            sharks.append(selected_player)
+            inexperienced.remove(selected_player)
 
         ## Average 2nd team
         for player in sharks:
             sharks_height_list.append(int(player['Height (inches)']))
-            sharks_height_average = sum(sharks_height_list)/len(sharks_height_list)
+
+        sharks_height_average = sum(sharks_height_list)/len(sharks_height_list)
 
         ## Append an inexperienced player as close as possible to the second average
         throwaway_list = []
+        throwaway_list2 = []
         for player in inexperienced:
-            throwaway_list.append(sharks_height_average - float(player['Height (inches)']))
+            throwaway_list.append(abs(sharks_height_average - float(player['Height (inches)'])))
+            throwaway_list2.append(abs(dragons_height_average - float(player['Height (inches)'])))
 
-        selected_player = inexperienced[throwaway_list.index(min(throwaway_list))]
-        raptors.append(selected_player)
-        inexperienced.remove(selected_player)
+        if min(throwaway_list) < min(throwaway_list2):
+                selected_player = inexperienced[throwaway_list.index(min(throwaway_list))]
+                raptors.append(selected_player)
+                inexperienced.remove(selected_player)
+        else:
+            selected_player = inexperienced[throwaway_list2.index(min(throwaway_list2))]
+            raptors.append(selected_player)
+            inexperienced.remove(selected_player)
 
         ## Average 3rd team
-        for player in sharks:
+        for player in raptors:
             raptors_height_list.append(int(player['Height (inches)']))
-            raptors_height_average = sum(raptors_height_list)/len(raptors_height_list)
+
+        raptors_height_average = sum(raptors_height_list)/len(raptors_height_list)
 
         ## Append an inexperienced player as close as possible to the first average
         throwaway_list = []
+        throwaway_list2 = []
         for player in inexperienced:
-            throwaway_list.append(raptors_height_average - float(player['Height (inches)']))
+            throwaway_list.append(abs(raptors_height_average - float(player['Height (inches)'])))
+            throwaway_list2.append(abs(sharks_height_average - float(player['Height (inches)'])))
 
-        selected_player = inexperienced[throwaway_list.index(min(throwaway_list))]
-        dragons.append(selected_player)
-        inexperienced.remove(selected_player)
+        if min(throwaway_list) < min(throwaway_list2):
+                selected_player = inexperienced[throwaway_list.index(min(throwaway_list))]
+                dragons.append(selected_player)
+                inexperienced.remove(selected_player)
+        else:
+            selected_player = inexperienced[throwaway_list2.index(min(throwaway_list2))]
+            dragons.append(selected_player)
+            inexperienced.remove(selected_player)
+
 
         ## Average 1st team
         for player in dragons:
             dragons_height_list.append(int(player['Height (inches)']))
-            dragons_height_average = sum(dragons_height_list)/len(dragons_height_list)
+
+        dragons_height_average = sum(dragons_height_list)/len(dragons_height_list)
 
     return(dragons,raptors,sharks, raptors_height_average, dragons_height_average, sharks_height_average)
 
