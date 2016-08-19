@@ -32,8 +32,7 @@ def sort_players_into_teams():
             experienced.append(row)
         else:
             inexperienced.append(row)
-
-    ## Sort according to height & experience
+   ## Sort according to height & experience
 
     experienced_player1 = random.choice(experienced)
     dragons.append(experienced_player1)
@@ -44,6 +43,7 @@ def sort_players_into_teams():
     ## Take the height average for dragons
     for player in dragons:
         dragons_height_list.append(int(player['Height (inches)']))
+
     dragons_height_average = sum(dragons_height_list)/len(dragons_height_list)
 
     while len(experienced) != 0:
@@ -262,14 +262,35 @@ Coach""".format(parents, player, player_team, practice.split()[0], practice.spli
 def write_log():
     import time
     time = time.localtime()
-    print (time)
     time_list = str(time[3]) + ':' + str(time[4]) + ':' + str(time[5])
+    a = 0
+    for players in raptors:
+        if players['Soccer Experience'].upper() == 'YES':
+            a = a + 1
+        else:
+            continue
+    b = 0
+    for players in dragons:
+        if players['Soccer Experience'].upper() == 'YES':
+            b = b + 1
+        else:
+            continue
+    c = 0
+    for players in sharks:
+        if players['Soccer Experience'].upper() == 'YES':
+            c = c + 1
+        else:
+            continue
+
 
     log_file = 'log'
 
     log_content = """
-
 Generated at {}
+
+Raptors - Experienced Players: {}
+Dragons - Experienced Players: {}
+Sharks - Experienced Players: {}
 
 Raptors Height Average: {}
 Dragons Height Average: {}
@@ -284,8 +305,8 @@ Raptors Practice: {}
 Sharks Practice: {}
 
 ############################
-""".format(time_list,raptors_height_average,dragons_height_average,sharks_height_average,
-           raptors_players, dragons_players, sharks_players, practice_times[1], practice_times[0], practice_times[2])
+""".format(time_list, a, b, c, raptors_height_average,dragons_height_average,sharks_height_average,
+           ", ".join(raptors_players), dragons_players, sharks_players, practice_times[1], practice_times[0], practice_times[2])
 
     with open(log_file, "a") as log:
         log.write(log_content)
@@ -295,3 +316,4 @@ if __name__ == "__main__":
     practice_times = set_practice()
     sharks_players, raptors_players, dragons_players = write_letter('Sal Dali')
     write_log()
+    print("\n" + "Success!")
