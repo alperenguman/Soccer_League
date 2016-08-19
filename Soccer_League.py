@@ -185,10 +185,23 @@ def sort_players_into_teams():
     difference.append(raptors_height_average)
     diff = max(difference) - min(difference)
 
+    sharks_players = []
+    dragons_players = []
+    raptors_players = []
+
+    for players in sharks:
+        sharks_players.append(players['Name'])
+    for players in dragons:
+        dragons_players.append(players['Name'])
+    for players in raptors:
+        raptors_players.append(players['Name'])
+
     if diff >= 1:
         return sort_players_into_teams()
+
     else:
-        return(dragons,raptors,sharks, raptors_height_average, dragons_height_average, sharks_height_average)
+        return(dragons,raptors,sharks, raptors_height_average, dragons_height_average,
+               sharks_height_average, raptors_players, dragons_players, sharks_players)
 
 
 
@@ -216,19 +229,6 @@ def set_practice():
     return (raptors_practice,dragons_practice,sharks_practice)
 
 def write_letter(player):
-
-    sharks_players = []
-    dragons_players = []
-    raptors_players = []
-
-    rows = csv_import()
-
-    for players in sharks:
-        sharks_players.append(players['Name'])
-    for players in dragons:
-        dragons_players.append(players['Name'])
-    for players in raptors:
-        raptors_players.append(players['Name'])
 
     if player in sharks_players:
         player_team = 'Sharks'
@@ -263,8 +263,6 @@ Coach""".format(parents, player, player_team, practice.split()[0], practice.spli
 
     with open(player_file, "w") as file:
         file.write(letter)
-
-    return(sharks_players, dragons_players, raptors_players)
 
 def write_log():
     import time
@@ -327,8 +325,11 @@ Sharks Practice: {}
     return (log_content)
 
 if __name__ == "__main__":
-    dragons,raptors,sharks, raptors_height_average, dragons_height_average, sharks_height_average = sort_players_into_teams()
+    rows = csv_import()
+    dragons,raptors,sharks, raptors_height_average, dragons_height_average, sharks_height_average, raptors_players, dragons_players, sharks_players= sort_players_into_teams()
     practice_times = set_practice()
-    sharks_players, raptors_players, dragons_players = write_letter('Sal Dali')
+    league = dragons_players + raptors_players + sharks_players
+    for player in league:
+        write_letter(player)
     log = write_log()
     print("\n" + "Success!" + "\n" + log)
