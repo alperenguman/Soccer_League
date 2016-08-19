@@ -32,34 +32,29 @@ def sort_players_into_teams():
             experienced.append(row)
         else:
             inexperienced.append(row)
-   ## Sort according to height & experience
 
-    experienced_player1 = random.choice(experienced)
-    dragons.append(experienced_player1)
-
-    ## Remove the random experienced player from pool of experienced players
-    experienced.remove(experienced_player1)
-
-    ## Take the height average for dragons
-    for player in dragons:
-        dragons_height_list.append(int(player['Height (inches)']))
-
-    dragons_height_average = sum(dragons_height_list)/len(dragons_height_list)
-
+    if len(experienced) %3 != 0:
+        print("Cannot evenly distribute Experienced players among the 3 teams")
+        exit()
+    else:
+        pass
+    First_Round = True
+    raptors_height_average = 0
+    dragons_height_average = 0
     while len(experienced) != 0:
-        raptors_height_average = None
         ## Append an experienced player to sharks as close as possible to the dragons average
         throwaway_list = []
         throwaway_list2 = []
         for player in experienced:
             throwaway_list.append(abs(dragons_height_average - float(player['Height (inches)'])))
-            ## Try block for when raptors height average is null when there are no members of the team yet.
-            try:
-                throwaway_list2.append(abs(raptors_height_average - float(player['Height (inches)'])))
-            except TypeError:
-                continue
+            throwaway_list2.append(abs(raptors_height_average - float(player['Height (inches)'])))
 
-        if throwaway_list2 != [] and min(throwaway_list2) < min(throwaway_list):
+        if First_Round == True:
+            random_player = random.choice(experienced)
+            sharks.append(random_player)
+            experienced.remove(random_player)
+            First_Round == False
+        elif throwaway_list2 != [] and min(throwaway_list2) < min(throwaway_list):
             selected_player = experienced[throwaway_list2.index(min(throwaway_list2))]
             sharks.append(selected_player)
             experienced.remove(selected_player)
@@ -103,14 +98,15 @@ def sort_players_into_teams():
             throwaway_list.append(abs(raptors_height_average - float(player['Height (inches)'])))
             throwaway_list2.append(abs(sharks_height_average -float(player['Height (inches)'])))
 
-            if throwaway_list != [] and throwaway_list2 != [] and min(throwaway_list) < min(throwaway_list2):
-                    selected_player = experienced[throwaway_list.index(min(throwaway_list))]
-                    dragons.append(selected_player)
-                    experienced.remove(selected_player)
-            else:
-                selected_player = experienced[throwaway_list2.index(min(throwaway_list2))]
+
+        if min(throwaway_list) < min(throwaway_list2):
+                selected_player = experienced[throwaway_list.index(min(throwaway_list))]
                 dragons.append(selected_player)
                 experienced.remove(selected_player)
+        else:
+            selected_player = experienced[throwaway_list2.index(min(throwaway_list2))]
+            dragons.append(selected_player)
+            experienced.remove(selected_player)
 
         ## Average height of dragons
         for player in dragons:
@@ -183,7 +179,18 @@ def sort_players_into_teams():
 
         dragons_height_average = sum(dragons_height_list)/len(dragons_height_list)
 
-    return(dragons,raptors,sharks, raptors_height_average, dragons_height_average, sharks_height_average)
+    difference = []
+    difference.append(dragons_height_average)
+    difference.append(sharks_height_average)
+    difference.append(raptors_height_average)
+    diff = max(difference) - min(difference)
+
+    if diff >= 1:
+        return sort_players_into_teams()
+    else:
+        return(dragons,raptors,sharks, raptors_height_average, dragons_height_average, sharks_height_average)
+
+
 
 def set_practice():
 
@@ -282,6 +289,11 @@ def write_log():
         else:
             continue
 
+    difference = []
+    difference.append(dragons_height_average)
+    difference.append(sharks_height_average)
+    difference.append(raptors_height_average)
+    diff = max(difference) - min(difference)
 
     log_file = 'log'
 
@@ -295,6 +307,7 @@ Sharks - Experienced Players: {}
 Raptors Height Average: {}
 Dragons Height Average: {}
 Sharks Height Average: {}
+Tallest/Shortest Difference: {}
 
 Raptors Team: {}
 Dragons Team: {}
@@ -305,15 +318,17 @@ Raptors Practice: {}
 Sharks Practice: {}
 
 ############################
-""".format(time_list, a, b, c, raptors_height_average,dragons_height_average,sharks_height_average,
-           ", ".join(raptors_players), dragons_players, sharks_players, practice_times[1], practice_times[0], practice_times[2])
+""".format(time_list, a, b, c, raptors_height_average,dragons_height_average,sharks_height_average, diff,
+           ", ".join(raptors_players), ", ".join(dragons_players), ", ".join(sharks_players), practice_times[1], practice_times[0], practice_times[2])
 
     with open(log_file, "a") as log:
         log.write(log_content)
+
+    return (log_content)
 
 if __name__ == "__main__":
     dragons,raptors,sharks, raptors_height_average, dragons_height_average, sharks_height_average = sort_players_into_teams()
     practice_times = set_practice()
     sharks_players, raptors_players, dragons_players = write_letter('Sal Dali')
-    write_log()
-    print("\n" + "Success!")
+    log = write_log()
+    print("\n" + "Success!" + "\n" + log)
