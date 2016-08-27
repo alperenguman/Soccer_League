@@ -204,30 +204,6 @@ def sort_players_into_teams():
                sharks_height_average, raptors_players, dragons_players, sharks_players)
 
 
-
-def set_practice():
-
-    days = 'Friday', 'Saturday', 'Sunday'
-    am_pm = 'AM', 'PM'
-
-    raptors_day = random.choice(days)
-    raptors_hour = str(random.randint(1,12)) + ' ' + random.choice (am_pm)
-    raptors_practice = raptors_day + ' ' + raptors_hour
-
-    sharks_day = random.choice(days)
-    sharks_hour = str(random.randint(1,12)) + ' ' + random.choice (am_pm)
-    sharks_practice = sharks_day + ' ' + sharks_hour
-
-    dragons_day = random.choice(days)
-    dragons_hour = str(random.randint(1,12)) + ' ' + random.choice (am_pm)
-    dragons_practice = dragons_day + ' ' + dragons_hour
-
-    ## MAKE SURE PRACTICE TIMES DON'T COINCIDE
-    if raptors_practice == dragons_practice or dragons_practice == sharks_practice or raptors_practice == sharks_practice:
-        set_practice()
-
-    return (raptors_practice,dragons_practice,sharks_practice)
-
 def write_letter(player):
 
     if player in sharks_players:
@@ -254,12 +230,12 @@ First practice is on {} at {}. Hope to see you
 and little {} there.
 
 Sincerely,
-Coach""".format(parents, player, player_team, practice.split()[0], practice.split()[1] + ' ' + practice.split()[2],
+Coach""".format(parents, player, player_team, practice.split()[0] + ' ' + practice.split()[1],practice.split()[2],
                 player.split()[0])
 
     name_split = player.split()
     name_join = '_'.join(name_split)
-    player_file = name_join + '.txt'
+    player_file = name_join.lower() + '.txt'
 
     with open(player_file, "w") as file:
         file.write(letter)
@@ -327,7 +303,7 @@ Sharks Practice: {}
 if __name__ == "__main__":
     rows = csv_import()
     dragons,raptors,sharks, raptors_height_average, dragons_height_average, sharks_height_average, raptors_players, dragons_players, sharks_players= sort_players_into_teams()
-    practice_times = set_practice()
+    practice_times = ["March 18, 1pm", "March 17, 1pm", "March 17, 3pm"]
     league = dragons_players + raptors_players + sharks_players
     for player in league:
         write_letter(player)
